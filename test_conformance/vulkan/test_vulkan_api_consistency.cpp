@@ -26,6 +26,7 @@
 #endif
 
 #include <assert.h>
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <string.h>
@@ -79,9 +80,9 @@ struct ConsistencyExternalBufferTest : public VulkanTestBase
 
         VulkanBufferList vkBufferList(1, *vkDevice, bufferSize,
                                       vkExternalMemoryHandleType);
-        VulkanDeviceMemory* vkDeviceMem = new VulkanDeviceMemory(
+        std::unique_ptr<VulkanDeviceMemory> vkDeviceMem(new VulkanDeviceMemory(
             *vkDevice, vkBufferList[0], memoryTypeList[0],
-            vkExternalMemoryHandleType);
+            vkExternalMemoryHandleType));
 
         vkDeviceMem->bindBuffer(vkBufferList[0], 0);
 
@@ -239,9 +240,9 @@ struct ConsistencyExternalImageTest : public VulkanTestBase
                  memoryTypeList[0].getMemoryTypeProperty());
         log_info("Image size : %" PRIu64 "\n", vkImage2D.getSize());
 
-        VulkanDeviceMemory* vkDeviceMem =
+        std::unique_ptr<VulkanDeviceMemory> vkDeviceMem(
             new VulkanDeviceMemory(*vkDevice, vkImage2D, memoryTypeList[0],
-                                   vkExternalMemoryHandleType);
+                                   vkExternalMemoryHandleType));
         vkDeviceMem->bindImage(vkImage2D, 0);
 
         [[maybe_unused]] void* handle = NULL;
